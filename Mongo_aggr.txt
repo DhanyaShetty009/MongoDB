@@ -1,0 +1,62 @@
+use shop
+switched to db shop
+
+shop> db.authors.insertMany( [ { name: "Smith" , city: "California" }, { name: "James" , city: "Melbourne"} ] )
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('677bc763a22f52b0c90d8190'),
+    '1': ObjectId('677bc763a22f52b0c90d8191')
+  }
+}
+
+shop> db.books.insertOne( { title: "book_1" , price: 110 , authorId:  ObjectId('677bc763a22f52b0c90d8190') } )
+{
+  acknowledged: true,
+  insertedId: ObjectId('677bc79aa22f52b0c90d8192')
+}
+
+
+shop> db.authors.find()
+[
+  {
+    _id: ObjectId('677bc763a22f52b0c90d8190'),
+    name: 'Smith',
+    city: 'California'
+  },
+  {
+    _id: ObjectId('677bc763a22f52b0c90d8191'),
+    name: 'James',
+    city: 'Melbourne'
+  }
+]
+
+
+shop> db.books.find()
+[
+  {
+    _id: ObjectId('677bc79aa22f52b0c90d8192'),
+    title: 'book_1',
+    price: 110,
+    authorId: "ObjectId('677bc763a22f52b0c90d8190')"
+  }
+]
+
+
+
+shop> db.books.aggregate( [ { $lookup: { from: "authors" , localField: "autho_id" , foreignField: "_id" , as: "author_details" } } ] )
+[
+  {
+    _id: ObjectId('677bc96ba22f52b0c90d8193'),
+    title: 'book_1',
+    price: 110,
+    autho_id: ObjectId('677bc763a22f52b0c90d8190'),
+    author_details: [
+      {
+        _id: ObjectId('677bc763a22f52b0c90d8190'),
+        name: 'Smith',
+        city: 'California'
+      }
+    ]
+  }
+]
